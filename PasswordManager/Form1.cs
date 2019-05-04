@@ -262,8 +262,7 @@ namespace PasswordManager
             for (int i = 0; i < entries.Count; i++) {
                 if (entries[i]["red"].ToString() == title)
                 {
-                    byte[] plaintext = ProtectedData.Unprotect(Base64Decode(entries[i]["green"].ToString()), Base64Decode(entries[i]["yellow"].ToString()), DataProtectionScope.CurrentUser);
-                    entries.Remove(entries[i]);
+                   entries.Remove(entries[i]);
                 }
             }
             File.WriteAllText(@"data.json", data.ToString());
