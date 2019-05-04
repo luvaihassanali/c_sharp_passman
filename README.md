@@ -7,3 +7,12 @@ Windows Form App
 4. Build project then copy key.icon and data.json into bin/Debug or Release
 5. Run
 
+New entries can be created with New, deleted with Delete, and the Reset button will delete all entries (user will be prompted to validate). After an entry has been made, click the corresponding button to copy the password to your clipboard. You have 5 seconds to paste your password into the designated input before the clipboard is cleared
+
+To reset, set data.json to:
+```
+{
+  "entries": []
+}
+```
+
