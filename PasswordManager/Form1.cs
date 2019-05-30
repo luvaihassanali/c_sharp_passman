@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Data;
 using System.Threading;
+using System.Linq;
 
 namespace PasswordManager
 {
@@ -18,20 +19,12 @@ namespace PasswordManager
         private static System.Timers.Timer timer;
         public Form1()
         {
-           // key = null;
             InitializeComponent();
-            // Create a simple tray menu with only one item.
             trayMenu = new ContextMenu();
             trayMenu.MenuItems.Add("Exit", OnExit);
-
-            // Create a tray icon. In this example we use a
-            // standard system icon for simplicity, but you
-            // can of course use your own custom icon too.
             trayIcon = new NotifyIcon();
             trayIcon.Text = "Password Manager";
             trayIcon.Icon = new Icon("key.ico");
-
-            // Add menu to tray icon and show it.
             trayIcon.ContextMenu = trayMenu;
             trayIcon.Visible = true;
             trayIcon.Click += new EventHandler(trayIcon_Click);
@@ -46,14 +39,14 @@ namespace PasswordManager
             myDataTable.Columns.Add("Title", typeof(string));
             myDataTable.Columns.Add("Username", typeof(string));
             JArray entries = (JArray)data["entries"];
-
-            for (int i = 0; i < entries.Count; i++)
-            {
-                myDataTable.Rows.Add(entries[i]["red"].ToString(), entries[i]["yellow"].ToString());
+            JArray sorted = new JArray(entries.OrderBy(obj => (string)obj["red"]));
+            for (int i = 0; i < sorted.Count; i++) { 
+            
+                myDataTable.Rows.Add(sorted[i]["red"].ToString(), sorted[i]["yellow"].ToString());
             }
 
         }
-      
+
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             e.Cancel = true;
@@ -104,11 +97,12 @@ namespace PasswordManager
             myDataTable.Columns.Add("Title", typeof(string));
             myDataTable.Columns.Add("Username", typeof(string));
             JArray entries = (JArray)data["entries"];
-            for (int i = 0; i < entries.Count; i++)
+            JArray sorted = new JArray(entries.OrderBy(obj => (string)obj["red"]));
+            for (int i = 0; i < sorted.Count; i++)
             {
-                if (entries[i]["red"].ToString().Contains(searchBox.Text))
+                if (sorted[i]["red"].ToString().ToLower().Contains(searchBox.Text.ToLower()))
                 {
-                    myDataTable.Rows.Add(entries[i]["red"].ToString(), entries[i]["yellow"].ToString());
+                    myDataTable.Rows.Add(sorted[i]["red"].ToString(), sorted[i]["yellow"].ToString());
                 }
             }  
         }
