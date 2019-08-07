@@ -44,7 +44,7 @@ namespace PasswordManager
             
                 myDataTable.Rows.Add(sorted[i]["red"].ToString(), sorted[i]["yellow"].ToString());
             }
-
+            //printAllEntries();
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -262,54 +262,6 @@ namespace PasswordManager
             File.WriteAllText(@"data.json", data.ToString());
             return result;
         }
-        private static DialogResult ShowInputDialogKey(ref string input)
-        {
-            Size size = new Size(200, 70);
-            Form inputBox = new Form();
-
-            inputBox.FormBorderStyle = FormBorderStyle.FixedDialog;
-            inputBox.ClientSize = size;
-
-            TextBox textBox = new TextBox();
-            textBox.Size = new Size(size.Width - 10, 23);
-            textBox.Location = new Point(5, 5);
-            textBox.Text = input;
-            textBox.PasswordChar = '*';
-            inputBox.Controls.Add(textBox);
-
-            Button okButton = new Button();
-            okButton.DialogResult = DialogResult.OK;
-            okButton.Name = "okButton";
-            okButton.Size = new Size(75, 23);
-            okButton.Text = "&OK";
-            okButton.Location = new Point(size.Width - 80 - 80, 39);
-            inputBox.Controls.Add(okButton);
-
-            Button cancelButton = new Button();
-            cancelButton.DialogResult = DialogResult.Cancel;
-            cancelButton.Name = "cancelButton";
-            cancelButton.Size = new Size(75, 23);
-            cancelButton.Text = "&Cancel";
-            cancelButton.Location = new Point(size.Width - 80, 39);
-            inputBox.Controls.Add(cancelButton);
-
-            inputBox.AcceptButton = okButton;
-            inputBox.CancelButton = cancelButton;
-            inputBox.Text = "Enter key";
-
-            DialogResult result = inputBox.ShowDialog();
-            if (result.ToString().Equals("Cancel")) { System.Environment.Exit(1); }
-            input = textBox.Text;
-            if (input == "")
-            {
-                MessageBox.Show("Key cannot be blank.", "Error");
-                ShowInputDialogKey(ref input);
-
-            }
-            // make key
-            System.Diagnostics.Debug.WriteLine("Key enter");
-            return result;
-        }
         static public void deleteClipboardText()
         {
             try
@@ -365,6 +317,18 @@ namespace PasswordManager
                     timer.Enabled = true;
                     getData(entries[i]["green"].ToString(), entries[i]["blue"].ToString());
                 }
+            }
+        }
+        private void printAllEntries()
+        {
+            JArray entries = (JArray)data["entries"];
+            for (int i = 0; i < entries.Count; i++)
+            {
+                System.Diagnostics.Debug.WriteLine(entries[i]["red"].ToString());
+                System.Diagnostics.Debug.WriteLine(entries[i]["yellow"].ToString());
+                byte[] plaintext = ProtectedData.Unprotect(Base64Decode(entries[i]["green"].ToString()), Base64Decode(entries[i]["blue"].ToString()), DataProtectionScope.CurrentUser);
+                System.Diagnostics.Debug.WriteLine(getString(plaintext));
+                System.Diagnostics.Debug.WriteLine("- - - - - - - -");
             }
         }
     }
